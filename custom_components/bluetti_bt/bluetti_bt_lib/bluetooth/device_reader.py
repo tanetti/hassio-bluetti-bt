@@ -126,7 +126,7 @@ class DeviceReader:
                             if self.bluetti_device.pack_num_max > 1:
                                 # We need to wait after switching packs 
                                 # for the data to be available
-                                await asyncio.sleep(5)
+                                await asyncio.sleep(2)
                             
                             for command in pack_commands:
                                 # Request & parse result for each pack
