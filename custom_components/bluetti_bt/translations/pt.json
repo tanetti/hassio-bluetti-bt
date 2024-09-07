@@ -10,7 +10,8 @@
       }
     },
     "abort": {
-      "invalid_interval": "Valor invalido . Tem de ser no minimo 5 segundos"
+      "invalid_interval": "Valor invalido . Tem de ser no minimo 5 segundos",
+      "invalid_interval_persistant": "Valor invalido . Tem de ser no minimo 1 segundos"
     }
   }
 }

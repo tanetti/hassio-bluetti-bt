@@ -23,6 +23,7 @@
     },
     "abort": {
       "invalid_interval": "Invalid polling interval. Use 5 seconds or more",
+      "invalid_interval_persistant": "Invalid polling interval. Use 1 seconds or more",
       "invalid_timeout": "Invalid polling timeout. Use 1 second or more",
       "invalid_retries": "Invalid max retries. Use 1 or more"
     }

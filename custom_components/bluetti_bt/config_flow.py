@@ -139,7 +139,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
 
             # Validate update interval
-            if user_input[CONF_POLLING_INTERVAL] < 5:
+            if user_input[CONF_PERSISTENT_CONN] and user_input[CONF_POLLING_INTERVAL] < 1:
+                return self.async_abort(reason="invalid_interval_persistant")
+
+            if not user_input[CONF_PERSISTENT_CONN] and user_input[CONF_POLLING_INTERVAL] < 5:
                 return self.async_abort(reason="invalid_interval")
             
             # Validate update timeout

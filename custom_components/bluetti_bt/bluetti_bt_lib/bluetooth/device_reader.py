@@ -60,22 +60,26 @@ class DeviceReader:
 
         async with self.polling_lock:
             try:
-                async with async_timeout.timeout(self.polling_timeout):
-                    # Reconnect if not connected
-                    for attempt in range(1, self.max_retries + 1):
-                        try:
-                            if not self.client.is_connected:
-                                await self.client.connect()
-                            break
-                        except Exception as e:
-                            if attempt == self.max_retries:
-                                raise e # pass exception on max_retries attempt
-                            else:
-                                _LOGGER.warning(
-                                    f"Connect unsucessful (attempt {attempt}): {e}. Retrying..."
-                                )
-                                await asyncio.sleep(2)
+                # Reconnect if not connected
+                for attempt in range(1, self.max_retries + 1):
+                    if self.client.is_connected:
+                        break
 
+                    if self.has_notifier:
+                        self.has_notifier = False
+
+                    try:
+                        await self.client.connect()
+                    except Exception as e:
+                        if attempt == self.max_retries:
+                            raise e # pass exception on max_retries attempt
+                        else:
+                            _LOGGER.warning(
+                                f"Connect unsucessful: {e}. Retrying after {self.polling_timeout} seconds..."
+                            )
+                            await asyncio.sleep(self.polling_timeout)
+
+                async with async_timeout.timeout(self.polling_timeout):
                     # Attach notifier if needed
                     if not self.has_notifier:
                         await self.client.start_notify(

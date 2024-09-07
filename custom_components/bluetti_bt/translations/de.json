@@ -23,6 +23,7 @@
     },
     "abort": {
       "invalid_interval": "Ungültiger Datenabruf-Intervall. Verwende 5 Sekunden oder mehr",
+      "invalid_interval_persistant": "Ungültiger Datenabruf-Intervall. Verwende 1 Sekunden oder mehr",
       "invalid_timeout": "Ungültiger Datenabruf-Timeout. Verwende 1 Sekunde oder mehr",
       "invalid_retries": "Ungültige maximale Verbindungsversuche. Verwende 1 oder mehr"
     }
