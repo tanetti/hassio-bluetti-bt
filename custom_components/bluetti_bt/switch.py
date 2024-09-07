@@ -118,6 +118,7 @@ class BluettiSwitch(CoordinatorEntity, SwitchEntity):
         """Handle updated data from the coordinator."""
 
         if self.coordinator.reader.persistent_conn and not self.coordinator.reader.client.is_connected:
+            self._attr_available = False
             return
 
         _LOGGER.debug("Updating state of %s", unique_id_loggable(self._attr_unique_id))

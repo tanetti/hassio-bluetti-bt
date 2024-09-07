@@ -124,6 +124,7 @@ class BluettiBinarySensor(CoordinatorEntity, BinarySensorEntity):
         """Handle updated data from the coordinator."""
 
         if self.coordinator.reader.persistent_conn and not self.coordinator.reader.client.is_connected:
+            self._set_unavailable("Data is None")
             return
         
         if self.coordinator.data is None:
