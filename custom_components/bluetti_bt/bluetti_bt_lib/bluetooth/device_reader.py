@@ -61,7 +61,7 @@ class DeviceReader:
         async with self.polling_lock:
             try:
                 # Reconnect if not connected
-                for attempt in range(1, self.max_retries + 1):
+                for attempt in range(1, 5):
                     if self.client.is_connected:
                         break
 
@@ -71,7 +71,7 @@ class DeviceReader:
                     try:
                         await self.client.connect()
                     except Exception as e:
-                        if attempt == self.max_retries:
+                        if attempt == 4:
                             raise e # pass exception on max_retries attempt
                         else:
                             _LOGGER.warning(
@@ -79,7 +79,7 @@ class DeviceReader:
                             )
                             await asyncio.sleep(self.polling_timeout)
 
-                async with async_timeout.timeout(self.polling_timeout):
+                async with async_timeout.timeout(self.polling_timeout * 5):
                     # Attach notifier if needed
                     if not self.has_notifier:
                         await self.client.start_notify(
