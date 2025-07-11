@@ -50,5 +50,4 @@ DIAGNOSTIC_FIELDS = [
     "total_ac_consumption",
     "total_grid_consumption",
     "total_grid_feed",
-    "ac_input_voltage",
 ]
