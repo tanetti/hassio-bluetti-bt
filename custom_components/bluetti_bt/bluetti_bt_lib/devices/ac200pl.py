@@ -23,7 +23,7 @@ class AC200PL(ProtocolV2Device):
         # self.struct.add_bool_field('ac_output_on', 48)
         # self.struct.add_bool_field('dc_output_on', 49)
         self.struct.add_decimal_field('ac_input_voltage', 77, 1)
-        self.struct.add_decimal_field('ac_input_frequency', 80, 2)
+        # self.struct.add_decimal_field('ac_input_frequency', 80, 2)
 
         # Controls (3000)
         # self.struct.add_enum_field('ups_mode', 3001, UpsMode)
