@@ -26,6 +26,7 @@ DEVICE_NAME_RE = re.compile(
 
 def build_device(address: str, name: str):
     match = DEVICE_NAME_RE.match(name)
+    
     if match[1] == "AC60":
         return AC60(address, match[2])
     if match[1] == "AC70":
@@ -39,7 +40,7 @@ def build_device(address: str, name: str):
     if match[1] == "AC200L":
         return AC200L(address, match[2])
     if match[1] == "AC200PL":
-        return AC200PL(address, match[2])
+        return AC200PL(address, match[1] + match[2])
     if match[1] == "AC200M":
         return AC200M(address, match[2])
     if match[1] == "AC300":
