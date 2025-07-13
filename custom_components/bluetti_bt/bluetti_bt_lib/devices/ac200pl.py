@@ -2,6 +2,7 @@
 
 from typing import List
 
+from ..field_enums import ChargingMode
 # from ..field_enums import ChargingMode, AutoSleepMode, UpsMode
 from ..utils.commands import ReadHoldingRegisters
 from ..base_devices.ProtocolV2Device import ProtocolV2Device
@@ -45,7 +46,7 @@ class AC200PL(ProtocolV2Device):
         self.struct.add_bool_field('power_off', 3060)
         # self.struct.add_enum_field('auto_sleep_mode', 3061, AutoSleepMode)
         self.struct.add_bool_field('silent_charging_on', 3065)
-        # self.struct.add_enum_field('charging_mode', 3065, ChargingMode)
+        self.struct.add_enum_field('charging_mode', 3065, ChargingMode)
         self.struct.add_bool_field('power_lifting_on', 3066)
 
     @property
