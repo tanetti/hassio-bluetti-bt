@@ -43,7 +43,7 @@ class AC200PL(ProtocolV1Device):
         # self.struct.add_bool_field('silent_charging_on', 3065)
         # self.struct.add_enum_field('eco_shutdown', 3064, EcoShutdown)
         self.struct.add_enum_field('charging_mode', 3065, ChargingMode)
-        self.struct.add_bool_field('power_lifting_on', 3066)
+        # self.struct.add_bool_field('power_lifting_on', 3066)
         
     @property
     def pack_num_max(self):
@@ -51,18 +51,19 @@ class AC200PL(ProtocolV1Device):
 
     @property
     def polling_commands(self) -> List[ReadHoldingRegisters]:
-        return self.struct.get_read_holding_registers(
-            filter=lambda address: address <= 90 or address >= 256 # pack_polling_commands
-        )
+        return super().polling_commands + [
+            ReadHoldingRegisters(3060, 1),
+            ReadHoldingRegisters(3065, 1),
+        ]
 
     @property
     def pack_polling_commands(self) -> List[ReadHoldingRegisters]:
         return [
-            ReadHoldingRegisters(91, 37),
-            ReadHoldingRegisters(201, 2),
+            ReadHoldingRegisters(91, 1),
+            ReadHoldingRegisters(99, 1),
         ]
 
     @property
     def writable_ranges(self) -> List[range]:
-        return super().writable_ranges + [range(3060, 3067)]
+        return super().writable_ranges + [range(3060, 3061)] + [range(3065, 3066)]
         

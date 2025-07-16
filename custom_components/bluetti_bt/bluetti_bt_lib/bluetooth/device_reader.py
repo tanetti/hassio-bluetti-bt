@@ -39,7 +39,7 @@ class DeviceReader:
         self.polling_lock = asyncio.Lock()
 
         self.set_pack = 0
-        self.scan_pack = 0
+        self.scaned_pack = 0
         self.skip_pack_pol = False
         self.packs = {}
 
@@ -96,11 +96,9 @@ class DeviceReader:
                             body = command.parse_response(
                                 await self._async_send_command(command)
                             )
-                            _LOGGER.debug("Raw data: %s", body)
                             parsed = self.bluetti_device.parse(
                                 command.starting_address, body
                             )
-                            _LOGGER.debug("Parsed data: %s", parsed)
                             parsed_data.update(parsed)
                         except ParseError:
                             _LOGGER.warning("Got a parse exception")
@@ -109,8 +107,10 @@ class DeviceReader:
                     if len(pack_commands) > 0 and len(self.bluetti_device.pack_num_field) == 1:
                         if self.skip_pack_pol:
                             self.skip_pack_pol = False                        
-                        elif self.set_pack == self.scan_pack:
-                            next_pack = self.scan_pack + 1 if self.scan_pack < self.bluetti_device.pack_num_max else 1
+                        elif self.set_pack == self.scaned_pack:
+                            self.skip_pack_pol = True
+
+                            next_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
                             command = self.bluetti_device.build_setter_command(
                             "pack_num", next_pack
@@ -120,10 +120,7 @@ class DeviceReader:
                             )
 
                             self.set_pack = int.from_bytes(body, byteorder='big')
-                            self.skip_pack_pol = True
                         else:
-                            self.scan_pack = self.set_pack
-
                             for command in pack_commands:
                                 # Request & parse result for each pack
                                 try:
@@ -134,10 +131,12 @@ class DeviceReader:
                                         command.starting_address, body
                                     )
 
-                                    self.packs.setdefault(self.scan_pack, {}).update(parsed)
+                                    self.packs.setdefault(self.set_pack, {}).update(parsed)
 
                                 except ParseError:
                                     _LOGGER.warning("Got a parse exception...")
+
+                            self.scaned_pack = self.set_pack
 
                         for pack_index, pack_data in self.packs.items():
                             for key, value in pack_data.items():
@@ -179,14 +178,12 @@ class DeviceReader:
             self.notify_response = bytearray()
 
             # Make request
-            _LOGGER.debug("Requesting %s", command)
             await self.client.write_gatt_char(WRITE_UUID, bytes(command))
 
             # Wait for response
             res = await asyncio.wait_for(self.notify_future, timeout=RESPONSE_TIMEOUT)
 
             # Process data
-            _LOGGER.debug("Got %s bytes", len(res))
             return cast(bytes, res)
 
         except TimeoutError:
