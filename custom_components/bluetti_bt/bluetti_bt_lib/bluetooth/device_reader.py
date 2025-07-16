@@ -13,7 +13,6 @@ from ..utils.commands import ReadHoldingRegisters
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class DeviceReader:
     def __init__(
         self,
@@ -38,6 +37,11 @@ class DeviceReader:
 
         # polling mutex to guard against switches
         self.polling_lock = asyncio.Lock()
+
+        self.set_pack = 0
+        self.scan_pack = 0
+        self.skip_pack_pol = False
+        self.packs = {}
 
     async def read_data(
         self, filter_registers: List[ReadHoldingRegisters] | None = None
@@ -103,30 +107,23 @@ class DeviceReader:
 
                     # Execute pack polling commands
                     if len(pack_commands) > 0 and len(self.bluetti_device.pack_num_field) == 1:
-                        _LOGGER.debug("Polling battery packs")
-                        for pack in range(1, self.bluetti_device.pack_num_max + 1):
-                            _LOGGER.debug("Setting pack_num to %i", pack)
+                        if self.skip_pack_pol:
+                            self.skip_pack_pol = False                        
+                        elif self.set_pack == self.scan_pack:
+                            next_pack = self.scan_pack + 1 if self.scan_pack < self.bluetti_device.pack_num_max else 1
 
-                            # Set current pack number
                             command = self.bluetti_device.build_setter_command(
-                                "pack_num", pack
+                            "pack_num", next_pack
                             )
                             body = command.parse_response(
                                 await self._async_send_command(command)
                             )
-                            _LOGGER.debug("Raw data set: %s", body)
 
-                            # Check set pack_num
-                            set_pack = int.from_bytes(body, byteorder='big')
-                            if set_pack is not pack:
-                                _LOGGER.warning("Pack polling failed (pack_num %i doesn't match expected %i)", set_pack, pack)
-                                continue
+                            self.set_pack = int.from_bytes(body, byteorder='big')
+                            self.skip_pack_pol = True
+                        else:
+                            self.scan_pack = self.set_pack
 
-                            if self.bluetti_device.pack_num_max > 1:
-                                # We need to wait after switching packs 
-                                # for the data to be available
-                                await asyncio.sleep(2)
-                            
                             for command in pack_commands:
                                 # Request & parse result for each pack
                                 try:
@@ -136,15 +133,18 @@ class DeviceReader:
                                     parsed = self.bluetti_device.parse(
                                         command.starting_address, body
                                     )
-                                    _LOGGER.debug("Parsed data: %s", parsed)
 
-                                    for key, value in parsed.items():
-                                        # Ignore likely unavailable pack data
-                                        if value != 0:
-                                            parsed_data.update({key + str(pack): value})
+                                    self.packs.setdefault(self.scan_pack, {}).update(parsed)
 
                                 except ParseError:
                                     _LOGGER.warning("Got a parse exception...")
+
+                        for pack_index, pack_data in self.packs.items():
+                            for key, value in pack_data.items():
+                                # Ignore likely unavailable pack data
+                                if value != 0:
+                                    parsed_data.update({key + str(pack_index): value})
+
 
             except TimeoutError as err:
                 _LOGGER.error(f"Polling timed out ({self.polling_timeout}s). Trying again later", exc_info=err)

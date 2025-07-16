@@ -34,7 +34,7 @@ class ProtocolV1Device(BluettiDevice):
         # self.struct.add_bool_field("dc_output_on", 49)
 
         # Pack selector
-        # self.struct.add_uint_field("pack_num", 3006)  # internal
+        self.struct.add_uint_field("pack_num", 3006)  # internal
 
         # Output controls
         self.struct.add_bool_field("ac_output_on_switch", 3007)
@@ -50,12 +50,12 @@ class ProtocolV1Device(BluettiDevice):
             # ReadHoldingRegisters(41, 1),
             ReadHoldingRegisters(43, 1),
             # ReadHoldingRegisters(48, 2),
-            ReadHoldingRegisters(3007, 2),
+            ReadHoldingRegisters(3006, 3),
         ]
 
     @property
     def writable_ranges(self) -> List[range]:
-        return [range(3007, 3009)]
+        return [range(3006, 3009)]
     
     # @property
     # def pack_num_field(self) -> List[ReadHoldingRegisters]:

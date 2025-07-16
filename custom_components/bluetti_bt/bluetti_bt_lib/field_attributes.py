@@ -339,9 +339,9 @@ FIELD_ATTRIBUTES: dict[str, FieldAttributes] = {
 
 def PACK_FIELD_ATTRIBUTES(pack: int):
     return {
-        "pack_voltage": VoltageFieldAttributes(
-            name=f"Battery Pack {pack} Voltage",
-        ),
+        # "pack_voltage": VoltageFieldAttributes(
+        #     name=f"Battery Pack {pack} Voltage",
+        # ),
         "pack_battery_percent": FieldAttributes(
             type=FieldType.NUMERIC,
             name=f"Battery Pack {pack} Percent",
@@ -349,8 +349,8 @@ def PACK_FIELD_ATTRIBUTES(pack: int):
             device_class="battery",
             state_class="measurement",
         ),
-        "pack_bms_version": FieldAttributes(
-            type=FieldType.NUMERIC,
-            name=f"Battery Pack {pack} BMS Version",
-        ),
+        # "pack_bms_version": FieldAttributes(
+        #     type=FieldType.NUMERIC,
+        #     name=f"Battery Pack {pack} BMS Version",
+        # ),
     }
