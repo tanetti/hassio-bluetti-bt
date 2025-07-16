@@ -108,6 +108,7 @@ class DeviceReader:
                         if self.skip_pack_pol:
                             self.skip_pack_pol = False                        
                         elif self.set_pack == self.scaned_pack:
+                            self.skip_pack_pol = True
 
                             next_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
@@ -119,8 +120,9 @@ class DeviceReader:
                             )
 
                             self.set_pack = int.from_bytes(body, byteorder='big')
-                            self.skip_pack_pol = True
                         else:
+                            self.scaned_pack = self.set_pack
+
                             for command in pack_commands:
                                 # Request & parse result for each pack
                                 try:
@@ -136,13 +138,6 @@ class DeviceReader:
                                 except ParseError:
                                     _LOGGER.warning("Got a parse exception...")
 
-                            self.scaned_pack = self.set_pack
-
-                        for pack_index, pack_data in self.packs.items():
-                            for key, value in pack_data.items():
-                                # Ignore likely unavailable pack data
-                                if value != 0:
-                                    parsed_data.update({key + str(pack_index): value})
 
 
             except TimeoutError as err:
@@ -162,6 +157,12 @@ class DeviceReader:
                             pass
                         self.has_notifier = False
                     await self.client.disconnect()
+
+            for pack_index, pack_data in self.packs.items():
+                for key, value in pack_data.items():
+                    # Ignore likely unavailable pack data
+                    if value != 0:
+                        parsed_data.update({key + str(pack_index): value})
 
             # Check if dict is empty
             if not parsed_data:
