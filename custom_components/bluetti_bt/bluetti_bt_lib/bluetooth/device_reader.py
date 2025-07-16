@@ -109,17 +109,14 @@ class DeviceReader:
                             self.skip_pack_pol = False                        
                         elif self.set_pack == self.scaned_pack:
                             self.skip_pack_pol = True
-
-                            next_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
+                            self.set_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
                             command = self.bluetti_device.build_setter_command(
-                            "pack_num", next_pack
+                            "pack_num", self.set_pack
                             )
-                            body = command.parse_response(
+                            command.parse_response(
                                 await self._async_send_command(command)
                             )
-
-                            self.set_pack = int.from_bytes(body, byteorder='big')
                         else:
                             self.scaned_pack = self.set_pack
 
@@ -133,11 +130,10 @@ class DeviceReader:
                                         command.starting_address, body
                                     )
 
-                                    self.packs.setdefault(self.set_pack, {}).update(parsed)
+                                    self.packs.setdefault(self.scaned_pack, {}).update(parsed)
 
                                 except ParseError:
                                     _LOGGER.warning("Got a parse exception...")
-
 
 
             except TimeoutError as err:
