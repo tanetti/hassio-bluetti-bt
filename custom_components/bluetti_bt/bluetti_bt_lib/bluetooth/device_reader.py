@@ -108,7 +108,6 @@ class DeviceReader:
                         if self.skip_pack_pol:
                             self.skip_pack_pol = False                        
                         elif self.set_pack == self.scaned_pack:
-                            self.skip_pack_pol = True
 
                             next_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
@@ -120,6 +119,7 @@ class DeviceReader:
                             )
 
                             self.set_pack = int.from_bytes(body, byteorder='big')
+                            self.skip_pack_pol = True
                         else:
                             for command in pack_commands:
                                 # Request & parse result for each pack

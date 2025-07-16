@@ -39,7 +39,7 @@ class PollingCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="Bluetti polling coordinator",
-            update_interval=timedelta(seconds=polling_interval),
+            update_interval=timedelta(seconds=polling_interval + 0.5),
         )
 
         self.address = address

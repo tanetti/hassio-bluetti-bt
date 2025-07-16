@@ -166,7 +166,7 @@ class BluettiSwitch(CoordinatorEntity, SwitchEntity):
 
         async with self._polling_lock:
             try:
-                async with async_timeout.timeout(15):
+                async with async_timeout.timeout(10):
                     if not self._client.is_connected:
                         await self._client.connect()
 
@@ -177,7 +177,7 @@ class BluettiSwitch(CoordinatorEntity, SwitchEntity):
                     )
 
                     # Wait until device has changed value, otherwise reading register might reset it
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(1.5)
 
             except TimeoutError:
                 _LOGGER.error("Timed out for device %s", mac_loggable(self._address))
