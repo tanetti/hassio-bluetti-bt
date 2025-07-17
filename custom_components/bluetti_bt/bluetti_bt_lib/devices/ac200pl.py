@@ -18,7 +18,7 @@ class AC200PL(ProtocolV1Device):
         # self.struct.add_decimal_field('ac_input_frequency', 80, 2, multiplier=10)
         
         # Battery packs
-        self.struct.add_uint_field("pack_num_max", 91)  # internal
+        # self.struct.add_uint_field("pack_num_max", 91)  # internal
         # self.struct.add_decimal_field("total_battery_voltage", 92, 1)
         self.struct.add_uint_field("pack_num_result", 96)  # internal
         # self.struct.add_decimal_field("pack_voltage", 98, 2)  # Full pack voltage
@@ -59,7 +59,8 @@ class AC200PL(ProtocolV1Device):
     @property
     def pack_polling_commands(self) -> List[ReadHoldingRegisters]:
         return [
-            ReadHoldingRegisters(91, 1),
+            # ReadHoldingRegisters(91, 1),
+            ReadHoldingRegisters(96, 1),
             ReadHoldingRegisters(99, 1),
         ]
 

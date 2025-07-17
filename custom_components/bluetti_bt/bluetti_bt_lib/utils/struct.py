@@ -115,7 +115,10 @@ class StringField(DeviceField):
     """Fixed-width null-terminated string field"""
 
     def parse(self, data: bytes) -> str:
-        return data.rstrip(b"\0").decode("ascii")
+        try:
+            return data.rstrip(b"\0").decode("ascii")
+        except UnicodeDecodeError:
+            return ""
 
 
 class SwapStringField(DeviceField):

@@ -114,11 +114,9 @@ class DeviceReader:
                             command = self.bluetti_device.build_setter_command(
                             "pack_num", self.set_pack
                             )
-                            command.parse_response(
-                                await self._async_send_command(command)
-                            )
+                            await self._async_send_command(command)
                         else:
-                            self.scaned_pack = self.set_pack
+                            pack_temp = {}
 
                             for command in pack_commands:
                                 # Request & parse result for each pack
@@ -130,10 +128,13 @@ class DeviceReader:
                                         command.starting_address, body
                                     )
 
-                                    self.packs.setdefault(self.scaned_pack, {}).update(parsed)
-
+                                    pack_temp.update(parsed)
                                 except ParseError:
                                     _LOGGER.warning("Got a parse exception...")
+
+                            pack_num = pack_temp.get('pack_num_result')
+                            self.packs.setdefault(pack_num, {}).update(pack_temp)
+                            self.scaned_pack = pack_num
 
 
             except TimeoutError as err:
@@ -156,9 +157,7 @@ class DeviceReader:
 
             for pack_index, pack_data in self.packs.items():
                 for key, value in pack_data.items():
-                    # Ignore likely unavailable pack data
-                    if value != 0:
-                        parsed_data.update({key + str(pack_index): value})
+                    parsed_data.update({key + str(pack_index): value if value else None})
 
             # Check if dict is empty
             if not parsed_data:

@@ -81,7 +81,8 @@ def device_info(entry: ConfigEntry) -> DeviceInfo:
         identifiers={(DOMAIN, entry.data.get(CONF_ADDRESS))},
         name=entry.title,
         manufacturer=MANUFACTURER,
-        model=entry.data.get(CONF_TYPE),
+        model='AC200PL',
+        # model=entry.data.get(CONF_TYPE),
     )
 
 

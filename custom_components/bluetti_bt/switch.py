@@ -166,7 +166,7 @@ class BluettiSwitch(CoordinatorEntity, SwitchEntity):
 
         async with self._polling_lock:
             try:
-                async with async_timeout.timeout(10):
+                async with async_timeout.timeout(15):
                     if not self._client.is_connected:
                         await self._client.connect()
 
