@@ -200,7 +200,7 @@ class BluettiSelect(CoordinatorEntity, SelectEntity):
                     )
 
                     # Wait until device has changed value, otherwise reading register might reset it
-                    await asyncio.sleep(1.5)
+                    await asyncio.sleep(1)
 
             except TimeoutError:
                 _LOGGER.error("Timed out for device %s", mac_loggable(self._address))
