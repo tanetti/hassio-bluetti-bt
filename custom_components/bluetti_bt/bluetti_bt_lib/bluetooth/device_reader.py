@@ -40,7 +40,7 @@ class DeviceReader:
 
         self.set_pack = 0
         self.scaned_pack = 0
-        self.skip_pack_pol = False
+        self.skip_pack_count = 0
         self.packs = {}
 
     async def read_data(
@@ -105,10 +105,10 @@ class DeviceReader:
 
                     # Execute pack polling commands
                     if len(pack_commands) > 0 and len(self.bluetti_device.pack_num_field) == 1:
-                        if self.skip_pack_pol:
-                            self.skip_pack_pol = False                        
+                        if self.skip_pack_count > 0:
+                            self.skip_pack_count -= 1                        
                         elif self.set_pack == self.scaned_pack:
-                            self.skip_pack_pol = True
+                            self.skip_pack_count = 2
                             self.set_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
                             command = self.bluetti_device.build_setter_command(
@@ -133,8 +133,12 @@ class DeviceReader:
                                     _LOGGER.warning("Got a parse exception...")
 
                             pack_num = pack_temp.get('pack_num_result')
-                            self.packs.setdefault(pack_num, {}).update(pack_temp)
-                            self.scaned_pack = pack_num
+
+                            if (pack_num == self.set_pack):
+                                self.packs.setdefault(pack_num, {}).update(pack_temp)
+                                self.scaned_pack = pack_num
+                            else:
+                                self.skip_pack_count = 1
 
 
             except TimeoutError as err:
