@@ -12,7 +12,7 @@ class AC200PL(ProtocolV1Device):
         super().__init__(address, "AC200PL", sn)
 
         # Power IO
-        # self.struct.add_decimal_field("internal_ac_voltage", 71, 1, multiplier=10)
+        self.struct.add_decimal_field("internal_ac_voltage", 71, 1, multiplier=10)
         # self.struct.add_decimal_field("internal_ac_frequency", 74, 2, multiplier=10)
         # self.struct.add_decimal_field('ac_input_voltage', 77, 1)
         # self.struct.add_decimal_field('ac_input_frequency', 80, 2, multiplier=10)
@@ -52,6 +52,7 @@ class AC200PL(ProtocolV1Device):
     @property
     def polling_commands(self) -> List[ReadHoldingRegisters]:
         return super().polling_commands + [
+            ReadHoldingRegisters(71, 1),
             ReadHoldingRegisters(3060, 1),
             ReadHoldingRegisters(3065, 1),
         ]
