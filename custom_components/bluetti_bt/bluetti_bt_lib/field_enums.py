@@ -55,3 +55,9 @@ class ChargingMode(Enum):
     STANDARD = 0
     SILENT = 1
     TURBO = 2
+
+@unique
+class BatteryState(Enum):
+    STANDBY = 0
+    CHARGE = 1
+    DISCHARGE = 2

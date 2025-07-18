@@ -2,8 +2,8 @@
 
 from typing import List
 
-from ..field_enums import ChargingMode
-# from ..field_enums import ChargingMode, AutoSleepMode, UpsMode, EcoShutdown
+from ..field_enums import ChargingMode, BatteryState
+# from ..field_enums import ChargingMode, AutoSleepMode, UpsMode, EcoShutdown, BatteryState
 from ..utils.commands import ReadHoldingRegisters
 from ..base_devices.ProtocolV1Device import ProtocolV1Device
 
@@ -23,6 +23,7 @@ class AC200PL(ProtocolV1Device):
         self.struct.add_uint_field("pack_num_result", 96)  # internal
         # self.struct.add_decimal_field("pack_voltage", 98, 2)  # Full pack voltage
         self.struct.add_uint_field("pack_battery_percent", 99)
+        self.struct.add_enum_field('pack_battery_state', 100, BatteryState)
         # self.struct.add_decimal_array_field("cell_voltages", 105, 16, 2)  # internal
         # self.struct.add_version_field("pack_bms_version", 201)
 
@@ -63,6 +64,7 @@ class AC200PL(ProtocolV1Device):
             # ReadHoldingRegisters(91, 1),
             ReadHoldingRegisters(96, 1),
             ReadHoldingRegisters(99, 1),
+            ReadHoldingRegisters(100, 1),
         ]
 
     @property

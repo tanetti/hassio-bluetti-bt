@@ -161,7 +161,7 @@ class DeviceReader:
 
             for pack_index, pack_data in self.packs.items():
                 for key, value in pack_data.items():
-                    parsed_data.update({key + str(pack_index): value if value else None})
+                    parsed_data.update({key + str(pack_index): value})
 
             # Check if dict is empty
             if not parsed_data:
