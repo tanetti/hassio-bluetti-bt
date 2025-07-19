@@ -26,6 +26,7 @@ class AC200PL(ProtocolV1Device):
         self.struct.add_enum_field('pack_battery_state', 100, BatteryState)
         # self.struct.add_decimal_array_field("cell_voltages", 105, 16, 2)  # internal
         # self.struct.add_version_field("pack_bms_version", 201)
+        self.struct.add_uint_field("pack_bms_version", 201)
 
         # Controls (3000)
         # self.struct.add_enum_field('ups_mode', 3001, UpsMode)
@@ -63,8 +64,8 @@ class AC200PL(ProtocolV1Device):
         return [
             # ReadHoldingRegisters(91, 1),
             ReadHoldingRegisters(96, 1),
-            ReadHoldingRegisters(99, 1),
-            ReadHoldingRegisters(100, 1),
+            ReadHoldingRegisters(99, 2),
+            ReadHoldingRegisters(201, 1),
         ]
 
     @property
