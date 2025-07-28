@@ -133,6 +133,10 @@ class DeviceReader:
                                     _LOGGER.warning("Got a parse exception...")
 
                             pack_num = pack_temp.get('pack_num_result')
+                            is_pack_disconnected = pack_temp.get('pack_bms_version') == 0
+
+                            if is_pack_disconnected:
+                                pack_temp.update({ 'pack_battery_percent': None })
 
                             if pack_num == self.set_pack:
                                 self.packs.setdefault(pack_num, {}).update(pack_temp)
