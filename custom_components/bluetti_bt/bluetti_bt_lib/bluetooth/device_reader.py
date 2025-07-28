@@ -134,10 +134,12 @@ class DeviceReader:
 
                             pack_num = pack_temp.get('pack_num_result')
 
-                            if (pack_num == self.set_pack):
+                            if pack_num == self.set_pack:
                                 self.packs.setdefault(pack_num, {}).update(pack_temp)
                                 self.scaned_pack = pack_num
                             else:
+                                self.set_pack = 0
+                                self.scaned_pack = 0
                                 self.skip_pack_count = 1
 
 
