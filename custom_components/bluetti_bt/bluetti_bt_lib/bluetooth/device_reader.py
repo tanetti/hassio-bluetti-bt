@@ -108,7 +108,7 @@ class DeviceReader:
                         if self.skip_pack_count > 0:
                             self.skip_pack_count -= 1                        
                         elif self.set_pack == self.scaned_pack:
-                            self.skip_pack_count = 2
+                            self.skip_pack_count = 1
                             self.set_pack = self.scaned_pack + 1 if self.scaned_pack < self.bluetti_device.pack_num_max else 1
 
                             command = self.bluetti_device.build_setter_command(
