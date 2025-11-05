@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+import asyncio
 
 from bleak import BleakClient
 
@@ -71,8 +72,9 @@ class PollingCoordinator(DataUpdateCoordinator):
 
         # Check if device is connected
         if bluetooth.async_address_present(self.hass, self.address, connectable=True) is False:
-            self.logger.warning("Device not connected")
+            self.logger.warning("Device not connected. Retrying after 5 seconds...")
             self.last_update_success = False
+            await asyncio.sleep(5)
             return None
 
         return await self.reader.read_data()
